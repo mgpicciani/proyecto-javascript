@@ -3,11 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <script src="./main.js" defer></script>
-    <title>Document</title>
+    <title>Tienda de consolas</title>
 </head>
 <body>
-    <h1>Hola somos un local que vende consolas</h1>
+    <header>
+        <img src="logo de playstation.jpg" alt=""> 
+    </header>
+    <h1>Bienvenidos al local de venta de consolas</h1>
 
+    <div class="container">
+        <div class="producto">
+            <img src="play 5.jpg" alt="playstation 5">
+            <h2>Playstation 5</h2>
+            <p>Precio: $1500000</p>
+            <button class="agregar-al-carrito">Agregar al carrito</button>
+        </div>
+        <div class="producto">
+            <img src="play 4.jpg" alt="playstation 4">
+            <h2>Playstation 4</h2>
+            <p>Precio: $900000</p>
+            <button class="agregar-al-carrito">Agregar al carrito</button>
+        </div>
+        <div class="producto">
+            <img src="nintendo.png" alt="nintendo">
+            <h2>Nintendo switch</h2>
+            <p>Precio: $1500000</p>
+            <button class="agregar-al-carrito">Agregar al carrito</button>
+        </div>
+        <div class="producto">
+            <img src="xbox series s.png" alt="xbox series s">
+            <h2>Xbox series s</h2>
+            <p>Precio: $1000000</p>
+            <button class="agregar-al-carrito">Agregar al carrito</button>
+        </div>
+        <div id="carrito">
+            <h2>Carrito de compras</h2>
+            <ul id="lista-carrito"></ul>
+            <p>Total: $<span id="total">0</span></p>
+            <button id="vaciar-carrito">Vaciar carrito</button>
+            <button id="finalizar-compra">Finalizar compra</button>
+        </div>
+    </div>
+   
+
+    <footer>
+        <p>Todos los derechos reservados</p>
+    </footer>
+    <script src="./main.js" defer></script>
 </body>
 </html>

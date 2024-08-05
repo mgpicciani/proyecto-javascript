@@ -1,85 +1,60 @@
-alert ("Bienvenido")
-
-nombre = prompt ("¿cual es tu nombre?")
-
-console.log(nombre)
-
-alert ("Hola " + nombre )
-
-edad = Number ( prompt ("¿cuantos años tenes ? " + nombre) )
-
-if (edad >= 18){
-    alert ("Podes pasar")
-} else{
-    alert("No podes pasar")
-}
-
-
-let compra = confirm("¿Desea comprar una consola de videojuegos?");
-
-let total = 0;
-let bandera = true;
-
-const productos = [
-  { id: 1, nombre: "Playstation 4", precio: 644000 },
-  { id: 2, nombre: "Playstation 5", precio: 1500000 },
-  { id: 3, nombre: "Nintendo Switch", precio: 1000000 },
-  { id: 4, nombre: "Playstation 3", precio: 100000 },
-];
-
-function mostrarProductos() {
-  let opciones = "";
-  for (const producto of productos) {
-    opciones += `${producto.id} - ${producto.nombre}\n`;
-  }
-  return opciones;
-}
-
-function agregarProducto(idProducto) {
-  const producto = productos.find((producto) => producto.id === idProducto);
-  if (producto) {
-    total += producto.precio;
-    console.log(`Producto agregado: ${producto.nombre} - Precio: $${producto.precio}`);
-  } else {
-    console.error("Producto no encontrado");
-  }
-}
-
-while (bandera) {
-  let menu = mostrarProductos() + "\n¿Qué desea hacer?\n1. Agregar producto\n2. Finalizar compra";
-  let seleccion = prompt(menu);
-
-  switch (parseInt(seleccion)) {
-    case 1:
-      let idProducto = prompt("Ingrese el ID del producto:");
-      if (!isNaN(idProducto) && parseInt(idProducto) > 0 && parseInt(idProducto) <= productos.length) {
-        agregarProducto(parseInt(idProducto));
-      } else {
-        alert("ID de producto inválido");
-      }
-      break;
-
-    case 2:
-      bandera = false;
-      break;
-
-    default:
-      alert("Opción inválida. Intente nuevamente.");
-  }
-}
-
-if (total > 0) {
-  console.log("\nRESUMEN DE COMPRA");
-  for (const producto of productos) {
-    if (productos.some((p) => p.id === producto)) {
-      console.log(`${producto.nombre}: $${producto.precio}`);
+document.addEventListener('DOMContentLoaded', () => {
+    const carrito = document.getElementById('lista-carrito');
+    const totalElement = document.getElementById('total');
+    const vaciarCarritoButton = document.getElementById('vaciar-carrito');
+    const mensajeAgradecimiento = document.getElementById('mensaje-agradecimiento');
+    let total = 0;
+    
+    function actualizarTotal(cantidad, precio) {
+        total += cantidad * precio;
+        totalElement.textContent = total;
     }
-  }
-  console.log(`TOTAL: $${total}`);
-  alert("¡Gracias por su compra!");
-} else {
-  console.log("No se han agregado productos a la compra");
-}
 
+    // Función para agregar producto al carrito
+    function agregarAlCarrito(event) {
+        const productoDiv = event.target.closest('.producto');
+        const nombre = productoDiv.querySelector('h2').textContent;
+        const precioTexto = productoDiv.querySelector('p').textContent;
+        const precio = parseInt(precioTexto.replace('Precio: $', '').replace(/,/g, ''), 10);
 
+        // Verifica si el producto ya está en el carrito
+        const productoEnCarrito = Array.from(carrito.children).find(li => li.dataset.nombre === nombre);
 
+        if (productoEnCarrito) {
+            // Si el producto ya está en el carrito, actualiza la cantidad y el precio
+            let cantidad = parseInt(productoEnCarrito.dataset.cantidad, 10) + 1;
+            productoEnCarrito.dataset.cantidad = cantidad;
+            productoEnCarrito.querySelector('.cantidad').textContent = `Cantidad: ${cantidad}`;
+            productoEnCarrito.querySelector('.precio').textContent = `Total: $${precio * cantidad}`;
+            actualizarTotal(precio, 1); // Solo sumar el precio de una unidad adicional
+        } else {
+            // Si el producto no está en el carrito, crea un nuevo elemento
+            const li = document.createElement('li');
+            li.dataset.nombre = nombre;
+            li.dataset.cantidad = 1;
+            li.innerHTML = `
+                ${nombre} - <span class="precio">Total: $${precio}</span> - <span class="cantidad">Cantidad: 1</span>
+            `;
+            
+            // Añadir al carrito y actualizar total
+            carrito.appendChild(li);
+            actualizarTotal(precio, 1); // Sumar el precio del nuevo producto
+        }
+    }
+
+    // Función para vaciar el carrito
+    function vaciarCarrito() {
+        carrito.innerHTML = '';
+        total = 0;
+        totalElement.textContent = total;
+    }
+
+    // Asignar evento a los botones de agregar al carrito
+    const botonesAgregar = document.querySelectorAll('.agregar-al-carrito');
+    botonesAgregar.forEach(button => {
+        button.addEventListener('click', agregarAlCarrito);
+    });
+
+    // Asignar evento al botón de vaciar carrito
+    vaciarCarritoButton.addEventListener('click', vaciarCarrito);
+});
