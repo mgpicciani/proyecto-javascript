@@ -1,60 +1,133 @@
 document.addEventListener('DOMContentLoaded', () => {
     const carrito = document.getElementById('lista-carrito');
-    const totalElement = document.getElementById('total');
-    const vaciarCarritoButton = document.getElementById('vaciar-carrito');
+    const totalSpan = document.getElementById('total');
+    const vaciarCarritoBtn = document.getElementById('vaciar-carrito');
+    const finalizarCompraBtn = document.getElementById('finalizar-compra');
+    const confirmarEnvioBtn = document.getElementById('confirmar-envio');
+    const confirmarPagoBtn = document.getElementById('confirmar-pago');
     const mensajeAgradecimiento = document.getElementById('mensaje-agradecimiento');
-    let total = 0;
-    
-    function actualizarTotal(cantidad, precio) {
-        total += cantidad * precio;
-        totalElement.textContent = total;
-    }
+    const productosDiv = document.getElementById('productos');
+    const envioDiv = document.getElementById('envio');
+    const pagoDiv = document.getElementById('pago');
 
-    // Función para agregar producto al carrito
-    function agregarAlCarrito(event) {
-        const productoDiv = event.target.closest('.producto');
-        const nombre = productoDiv.querySelector('h2').textContent;
-        const precioTexto = productoDiv.querySelector('p').textContent;
-        const precio = parseInt(precioTexto.replace('Precio: $', '').replace(/,/g, ''), 10);
+    // Cargar productos desde JSON en localStorage
+    function cargarProductos() {
+        const productos = [
+            {
+                nombre: 'Playstation 5',
+                precio: 1500000,
+                imagen: 'img/play 5.jpg'
+            },
+            {
+                nombre: 'Playstation 4',
+                precio: 900000,
+                imagen: 'img/play 4.jpg'
+            },
+            {
+                nombre: 'Nintendo Switch',
+                precio: 1500000,
+                imagen: 'img/nintendo.png'
+            },
+            {
+                nombre: 'Xbox Series S',
+                precio: 1000000,
+                imagen: 'img/xbox series s.png'
+            }
+        ];
 
-        // Verifica si el producto ya está en el carrito
-        const productoEnCarrito = Array.from(carrito.children).find(li => li.dataset.nombre === nombre);
-
-        if (productoEnCarrito) {
-            // Si el producto ya está en el carrito, actualiza la cantidad y el precio
-            let cantidad = parseInt(productoEnCarrito.dataset.cantidad, 10) + 1;
-            productoEnCarrito.dataset.cantidad = cantidad;
-            productoEnCarrito.querySelector('.cantidad').textContent = `Cantidad: ${cantidad}`;
-            productoEnCarrito.querySelector('.precio').textContent = `Total: $${precio * cantidad}`;
-            actualizarTotal(precio, 1); // Solo sumar el precio de una unidad adicional
-        } else {
-            // Si el producto no está en el carrito, crea un nuevo elemento
-            const li = document.createElement('li');
-            li.dataset.nombre = nombre;
-            li.dataset.cantidad = 1;
-            li.innerHTML = `
-                ${nombre} - <span class="precio">Total: $${precio}</span> - <span class="cantidad">Cantidad: 1</span>
+        productos.forEach(producto => {
+            const productoDiv = document.createElement('div');
+            productoDiv.classList.add('producto');
+            productoDiv.innerHTML = `
+                <img src="${producto.imagen}" alt="${producto.nombre}">
+                <h2>${producto.nombre}</h2>
+                <p>Precio: $${producto.precio}</p>
+                <button class="agregar-al-carrito">Agregar al carrito</button>
             `;
-            
-            // Añadir al carrito y actualizar total
-            carrito.appendChild(li);
-            actualizarTotal(precio, 1); // Sumar el precio del nuevo producto
-        }
+            productosDiv.appendChild(productoDiv);
+        });
+
+        document.querySelectorAll('.agregar-al-carrito').forEach(btn => {
+            btn.addEventListener('click', agregarAlCarrito);
+        });
     }
 
-    // Función para vaciar el carrito
-    function vaciarCarrito() {
+    function obtenerCarrito() {
+        return JSON.parse(localStorage.getItem('carrito')) || [];
+    }
+
+    function guardarCarrito(carritoItems) {
+        localStorage.setItem('carrito', JSON.stringify(carritoItems));
+    }
+
+    function actualizarCarrito() {
+        const carritoItems = obtenerCarrito();
         carrito.innerHTML = '';
-        total = 0;
-        totalElement.textContent = total;
+        let total = 0;
+
+        carritoItems.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${item.nombre} - $${item.precio}`;
+            const eliminarBtn = document.createElement('button');
+            eliminarBtn.textContent = 'Eliminar';
+            eliminarBtn.addEventListener('click', () => eliminarProducto(index));
+            li.appendChild(eliminarBtn);
+            carrito.appendChild(li);
+            total += item.precio;
+        });
+
+        totalSpan.textContent = total;
     }
 
-    // Asignar evento a los botones de agregar al carrito
-    const botonesAgregar = document.querySelectorAll('.agregar-al-carrito');
-    botonesAgregar.forEach(button => {
-        button.addEventListener('click', agregarAlCarrito);
-    });
+    function agregarAlCarrito(event) {
+        const producto = event.target.closest('.producto');
+        const nombre = producto.querySelector('h2').textContent;
+        const precio = parseFloat(producto.querySelector('p').textContent.replace('Precio: $', ''));
 
-    // Asignar evento al botón de vaciar carrito
-    vaciarCarritoButton.addEventListener('click', vaciarCarrito);
+        const carritoItems = obtenerCarrito();
+        carritoItems.push({ nombre, precio });
+        guardarCarrito(carritoItems);
+        actualizarCarrito();
+    }
+
+    function eliminarProducto(index) {
+        const carritoItems = obtenerCarrito();
+        carritoItems.splice(index, 1);
+        guardarCarrito(carritoItems);
+        actualizarCarrito();
+    }
+
+    function vaciarCarrito() {
+        localStorage.removeItem('carrito');
+        actualizarCarrito();
+    }
+
+    function confirmarEnvio() {
+        envioDiv.style.display = 'none';
+        pagoDiv.style.display = 'block';
+    }
+
+    function confirmarPago() {
+        localStorage.removeItem('carrito');
+        actualizarCarrito();
+        mensajeAgradecimiento.style.display = 'block';
+        pagoDiv.style.display = 'none';
+    }
+
+    function finalizarCompra() {
+        if (!document.getElementById('nombre').value || !document.getElementById('direccion').value || !document.getElementById('ciudad').value || !document.getElementById('codigo-postal').value) {
+            alert('Por favor, complete todos los detalles de envío.');
+            return;
+        }
+
+        confirmarEnvio();
+    }
+
+    cargarProductos();
+    actualizarCarrito();
+
+    vaciarCarritoBtn.addEventListener('click', vaciarCarrito);
+    finalizarCompraBtn.addEventListener('click', finalizarCompra);
+    confirmarEnvioBtn.addEventListener('click', confirmarEnvio);
+    confirmarPagoBtn.addEventListener('click', confirmarPago);
 });

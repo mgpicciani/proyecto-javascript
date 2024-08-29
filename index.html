@@ -4,39 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <script src="./main.js" defer></script>
     <title>Tienda de consolas</title>
 </head>
 <body>
     <header>
-        <img src="logo de playstation.jpg" alt=""> 
+        <img src="img/logo de playstation.jpg" alt=""> 
     </header>
     <h1>Bienvenidos al local de venta de consolas</h1>
 
     <div class="container">
-        <div class="producto">
-            <img src="play 5.jpg" alt="playstation 5">
-            <h2>Playstation 5</h2>
-            <p>Precio: $1500000</p>
-            <button class="agregar-al-carrito">Agregar al carrito</button>
-        </div>
-        <div class="producto">
-            <img src="play 4.jpg" alt="playstation 4">
-            <h2>Playstation 4</h2>
-            <p>Precio: $900000</p>
-            <button class="agregar-al-carrito">Agregar al carrito</button>
-        </div>
-        <div class="producto">
-            <img src="nintendo.png" alt="nintendo">
-            <h2>Nintendo switch</h2>
-            <p>Precio: $1500000</p>
-            <button class="agregar-al-carrito">Agregar al carrito</button>
-        </div>
-        <div class="producto">
-            <img src="xbox series s.png" alt="xbox series s">
-            <h2>Xbox series s</h2>
-            <p>Precio: $1000000</p>
-            <button class="agregar-al-carrito">Agregar al carrito</button>
+        <div id="productos">
+            <!-- Aquí se cargarán los productos dinámicamente -->
         </div>
         <div id="carrito">
             <h2>Carrito de compras</h2>
@@ -46,11 +24,39 @@
             <button id="finalizar-compra">Finalizar compra</button>
         </div>
     </div>
-   
 
-    <footer>
-        <p>Todos los derechos reservados</p>
-    </footer>
+    <div id="envio">
+        <h2>Detalles de Envío</h2>
+        <form id="form-envio">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" required>
+            <label for="ciudad">Ciudad:</label>
+            <input type="text" id="ciudad" required>
+            <label for="codigo-postal">Código Postal:</label>
+            <input type="text" id="codigo-postal" required>
+            <button type="button" id="confirmar-envio">Confirmar Envío</button>
+        </form>
+    </div>
+
+    <div id="pago" style="display: none;">
+        <h2>Detalles de Pago</h2>
+        <form id="form-pago">
+            <label for="tarjeta">Número de Tarjeta:</label>
+            <input type="text" id="tarjeta" required>
+            <label for="fecha-expiracion">Fecha de Expiración:</label>
+            <input type="text" id="fecha-expiracion" required>
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" required>
+            <button type="button" id="confirmar-pago">Confirmar Pago</button>
+        </form>
+    </div>
+
+    <div id="mensaje-agradecimiento" style="display: none;">
+        ¡Gracias por tu compra!
+    </div>
+
     <script src="./main.js" defer></script>
 </body>
 </html>
